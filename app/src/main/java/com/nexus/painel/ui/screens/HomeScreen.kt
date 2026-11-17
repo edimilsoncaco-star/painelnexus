@@ -18,6 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +42,7 @@ import com.nexus.painel.ui.theme.NeonRed
 fun HomeScreen() {
     val context = LocalContext.current
     val running by FloatingService.running.collectAsState()
+    var showInject by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -74,8 +78,8 @@ fun HomeScreen() {
                 }
             }
             Text(
-                text = "Abre a imagem do Painel Nexus flutuando sobre outros apps. " +
-                    "Toque na imagem para abrir o painel.",
+                text = "Envia a pasta configurada para o Free Fire e abre o painel flutuante. " +
+                    "Depois toque em Iniciar jogo.",
                 color = NexusGray,
                 fontSize = 13.sp,
                 modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
@@ -100,7 +104,7 @@ fun HomeScreen() {
                             )
                         }
 
-                        else -> FloatingService.start(context)
+                        else -> showInject = true
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -108,5 +112,9 @@ fun HomeScreen() {
         }
 
         Spacer(Modifier.height(24.dp))
+    }
+
+    if (showInject) {
+        InjectDialog(onDismiss = { showInject = false })
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import com.nexus.painel.ui.screens.AdminScreen
 import com.nexus.painel.ui.screens.KeyScreen
 import com.nexus.painel.ui.screens.MainScreen
 import com.nexus.painel.ui.screens.SplashScreen
@@ -44,9 +45,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Stage { Splash, Key, Main }
+private enum class Stage { Splash, Key, Main, Admin }
 
-/** Fluxo: Splash (5–7 s) → Key → Tela principal. */
+/** Fluxo: Splash (5–7 s) → Key → Tela principal (ou Painel ADM com a key de administrador). */
 @Composable
 private fun NexusApp() {
     var stage by remember { mutableStateOf(Stage.Splash) }
@@ -69,8 +70,11 @@ private fun NexusApp() {
         ) { target ->
             when (target) {
                 Stage.Splash -> SplashScreen(onFinished = { stage = Stage.Key })
-                Stage.Key -> KeyScreen(onAuthenticated = { stage = Stage.Main })
+                Stage.Key -> KeyScreen(
+                    onAuthenticated = { isAdmin -> stage = if (isAdmin) Stage.Admin else Stage.Main }
+                )
                 Stage.Main -> MainScreen()
+                Stage.Admin -> AdminScreen(onExit = { stage = Stage.Key })
             }
         }
     }

@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 /** Tela de acesso: logo no topo, caixa de texto e botão "Prosseguir". */
 @Composable
-fun KeyScreen(onAuthenticated: () -> Unit) {
+fun KeyScreen(onAuthenticated: (isAdmin: Boolean) -> Unit) {
     var key by remember { mutableStateOf("") }
     var verifying by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf(false) }
@@ -58,8 +58,10 @@ fun KeyScreen(onAuthenticated: () -> Unit) {
         verifying = true
         scope.launch {
             delay(1600) // "verificando a key..."
-            if (KeyValidator.isValid(key)) {
-                onAuthenticated()
+            if (KeyValidator.isAdmin(key)) {
+                onAuthenticated(true)
+            } else if (KeyValidator.isValid(key)) {
+                onAuthenticated(false)
             } else {
                 verifying = false
                 error = true
